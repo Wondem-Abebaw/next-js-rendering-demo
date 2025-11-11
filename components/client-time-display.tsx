@@ -11,8 +11,14 @@ interface TimeData {
 export default function ClientTimeDisplay() {
   const [timeData, setTimeData] = useState<TimeData | null>(null)
   const [loading, setLoading] = useState(true)
-  const [clientTime, setClientTime] = useState(new Date().toLocaleTimeString())
+  const [clientTime, setClientTime] = useState("")
   const [secondsSinceFetch, setSecondsSinceFetch] = useState(0)
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+    setClientTime(new Date().toLocaleTimeString())
+  }, [])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -72,7 +78,9 @@ export default function ClientTimeDisplay() {
 
             <div className="border rounded-lg p-4 bg-slate-50 dark:bg-slate-800">
               <p className="text-sm text-slate-500 dark:text-slate-400">Current Client Time</p>
-              <p className="text-xl font-mono font-bold text-slate-900 dark:text-slate-50">{clientTime}</p>
+              <p className="text-xl font-mono font-bold text-slate-900 dark:text-slate-50">
+                {isMounted ? clientTime : "—"}
+              </p>
               <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Updates every second</p>
             </div>
 

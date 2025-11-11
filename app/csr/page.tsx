@@ -15,8 +15,14 @@ export default function CSRPage() {
   const [timeData, setTimeData] = useState<TimeData | null>(null)
   const [loading, setLoading] = useState(true)
   const [refreshCount, setRefreshCount] = useState(0)
-  const [clientTime, setClientTime] = useState(new Date().toLocaleTimeString())
+  const [clientTime, setClientTime] = useState("")
   const [secondsSinceRender, setSecondsSinceRender] = useState(0)
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+    setClientTime(new Date().toLocaleTimeString())
+  }, [])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -90,7 +96,9 @@ export default function CSRPage() {
 
                 <div className="border rounded-lg p-4 bg-slate-50 dark:bg-slate-800">
                   <p className="text-sm text-slate-500 dark:text-slate-400">Current Client Time</p>
-                  <p className="text-2xl font-mono font-bold text-slate-900 dark:text-slate-50">{clientTime}</p>
+                  <p className="text-2xl font-mono font-bold text-slate-900 dark:text-slate-50">
+                    {isMounted ? clientTime : "—"}
+                  </p>
                   <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Updates every second in browser</p>
                 </div>
 
