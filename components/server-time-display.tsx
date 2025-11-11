@@ -14,7 +14,6 @@ async function getServerTime() {
 
 export default async function ServerTimeDisplay() {
   const timeData = await getServerTime()
-  const renderedAt = new Date().toLocaleTimeString()
 
   return (
     <Card>
@@ -45,9 +44,9 @@ export default async function ServerTimeDisplay() {
         </div>
 
         <div className="border rounded-lg p-4 bg-slate-50 dark:bg-slate-800">
-          <p className="text-sm text-slate-500 dark:text-slate-400">Rendered at</p>
-          <p className="text-sm font-mono text-slate-900 dark:text-slate-50">{renderedAt}</p>
-          <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Data is static - same for all visitors</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">UTC Offset</p>
+          <p className="text-sm font-mono text-slate-900 dark:text-slate-50">{timeData.utc_offset}</p>
+          <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Data is static and stable for all visitors</p>
         </div>
 
         <div className="bg-blue-50 dark:bg-blue-950 p-3 rounded border border-blue-200 dark:border-blue-800">

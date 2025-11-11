@@ -3,49 +3,47 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
-interface TimeData {
-  datetime: string
-  timezone: string
+interface RandomData {
+  number: number
+  fetchedAt: string
 }
 
 export default function ClientTimeDisplay() {
-  const [timeData, setTimeData] = useState<TimeData | null>(null)
+  const [data, setData] = useState<RandomData | null>(null)
   const [loading, setLoading] = useState(true)
-  const [clientTime, setClientTime] = useState("")
   const [secondsSinceFetch, setSecondsSinceFetch] = useState(0)
   const [isMounted, setIsMounted] = useState(false)
 
   useEffect(() => {
     setIsMounted(true)
-    setClientTime(new Date().toLocaleTimeString())
-  }, [])
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true)
-      try {
-        const response = await fetch("https://worldtimeapi.org/api/timezone/Etc/UTC")
-        const data: TimeData = await response.json()
-        setTimeData(data)
-        setSecondsSinceFetch(0)
-      } catch (error) {
-        console.error("Failed to fetch:", error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
+    // Stable API response ensures server and client render the same initial state
     fetchData()
   }, [])
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setClientTime(new Date().toLocaleTimeString())
       setSecondsSinceFetch((prev) => prev + 1)
     }, 1000)
 
     return () => clearInterval(interval)
   }, [])
+
+  const fetchData = async () => {
+    setLoading(true)
+    try {
+      const response = await fetch("https://www.randomnumberapi.com/api/v1.0/random?min=100&max=9999&count=1")
+      const result = await response.json()
+      setData({
+        number: result[0],
+        fetchedAt: new Date().toLocaleTimeString(),
+      })
+      setSecondsSinceFetch(0)
+    } catch (error) {
+      console.error("Failed to fetch:", error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <Card>
@@ -67,21 +65,17 @@ export default function ClientTimeDisplay() {
           <div className="border rounded-lg p-4 text-center">
             <p className="text-slate-500 dark:text-slate-400 text-sm">Fetching data...</p>
           </div>
-        ) : timeData ? (
+        ) : data && isMounted ? (
           <>
             <div className="border rounded-lg p-4 bg-slate-50 dark:bg-slate-800">
-              <p className="text-sm text-slate-500 dark:text-slate-400">API Time</p>
-              <p className="text-xl font-mono font-bold text-slate-900 dark:text-slate-50">
-                {new Date(timeData.datetime).toLocaleTimeString()}
-              </p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">Random Number (via API)</p>
+              <p className="text-xl font-mono font-bold text-slate-900 dark:text-slate-50">{data.number}</p>
             </div>
 
             <div className="border rounded-lg p-4 bg-slate-50 dark:bg-slate-800">
-              <p className="text-sm text-slate-500 dark:text-slate-400">Current Client Time</p>
-              <p className="text-xl font-mono font-bold text-slate-900 dark:text-slate-50">
-                {isMounted ? clientTime : "—"}
-              </p>
-              <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Updates every second</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">Fetched at</p>
+              <p className="text-xl font-mono font-bold text-slate-900 dark:text-slate-50">{data.fetchedAt}</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Client-side timestamp</p>
             </div>
 
             <div className="border rounded-lg p-4 bg-slate-50 dark:bg-slate-800">

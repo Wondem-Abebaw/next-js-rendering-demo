@@ -5,35 +5,36 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
-interface TimeData {
-  datetime: string
-  utc_offset: string
-  timezone: string
+interface RandomData {
+  number: number
+  fetchedAt: string
 }
 
 export default function CSRPage() {
-  const [timeData, setTimeData] = useState<TimeData | null>(null)
+  const [data, setData] = useState<RandomData | null>(null)
   const [loading, setLoading] = useState(true)
   const [refreshCount, setRefreshCount] = useState(0)
-  const [clientTime, setClientTime] = useState("")
   const [secondsSinceRender, setSecondsSinceRender] = useState(0)
   const [isMounted, setIsMounted] = useState(false)
 
   useEffect(() => {
     setIsMounted(true)
-    setClientTime(new Date().toLocaleTimeString())
   }, [])
 
   useEffect(() => {
+    // This demonstrates freshness differences clearly without server/client mismatches
     const fetchData = async () => {
       setLoading(true)
       try {
-        const response = await fetch("https://worldtimeapi.org/api/timezone/Etc/UTC")
-        const data: TimeData = await response.json()
-        setTimeData(data)
+        const response = await fetch("https://www.randomnumberapi.com/api/v1.0/random?min=1000&max=9999&count=1")
+        const result = await response.json()
+        setData({
+          number: result[0],
+          fetchedAt: new Date().toLocaleTimeString(),
+        })
         setSecondsSinceRender(0)
       } catch (error) {
-        console.error("Failed to fetch time:", error)
+        console.error("Failed to fetch random number:", error)
       } finally {
         setLoading(false)
       }
@@ -42,10 +43,8 @@ export default function CSRPage() {
     fetchData()
   }, [refreshCount])
 
-  // Update client time and seconds counter
   useEffect(() => {
     const interval = setInterval(() => {
-      setClientTime(new Date().toLocaleTimeString())
       setSecondsSinceRender((prev) => prev + 1)
     }, 1000)
 
@@ -85,38 +84,30 @@ export default function CSRPage() {
               <div className="border rounded-lg p-8 text-center">
                 <p className="text-slate-500 dark:text-slate-400">Loading data...</p>
               </div>
-            ) : timeData ? (
+            ) : data && isMounted ? (
               <div className="space-y-4">
                 <div className="border rounded-lg p-4 bg-slate-50 dark:bg-slate-800">
-                  <p className="text-sm text-slate-500 dark:text-slate-400">API Time (UTC)</p>
-                  <p className="text-2xl font-mono font-bold text-slate-900 dark:text-slate-50">
-                    {new Date(timeData.datetime).toLocaleTimeString()}
-                  </p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Random Number</p>
+                  <p className="text-2xl font-mono font-bold text-slate-900 dark:text-slate-50">{data.number}</p>
+                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Fetched on client</p>
                 </div>
 
                 <div className="border rounded-lg p-4 bg-slate-50 dark:bg-slate-800">
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Current Client Time</p>
-                  <p className="text-2xl font-mono font-bold text-slate-900 dark:text-slate-50">
-                    {isMounted ? clientTime : "—"}
-                  </p>
-                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Updates every second in browser</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Fetched at (Client Time)</p>
+                  <p className="text-2xl font-mono font-bold text-slate-900 dark:text-slate-50">{data.fetchedAt}</p>
+                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Client-only timestamp</p>
                 </div>
 
                 <div className="border rounded-lg p-4 bg-slate-50 dark:bg-slate-800">
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Timezone</p>
-                  <p className="text-xl font-semibold text-slate-900 dark:text-slate-50">{timeData.timezone}</p>
-                </div>
-
-                <div className="border rounded-lg p-4 bg-slate-50 dark:bg-slate-800">
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Seconds Since Data Fetch</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Seconds Since Fetch</p>
                   <p className="text-2xl font-bold text-slate-900 dark:text-slate-50">{secondsSinceRender}s</p>
-                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Shows freshness of data</p>
+                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Shows data freshness</p>
                 </div>
 
                 <div className="border rounded-lg p-4 bg-lime-50 dark:bg-lime-950">
                   <p className="text-sm font-semibold text-lime-900 dark:text-lime-100">Notice:</p>
                   <p className="text-sm text-lime-800 dark:text-lime-200 mt-1">
-                    The client time updates every second. This page renders entirely in your browser!
+                    The number and timestamp update every time you fetch. This page renders entirely in your browser!
                   </p>
                 </div>
               </div>
@@ -127,7 +118,7 @@ export default function CSRPage() {
             )}
 
             <Button onClick={handleRefresh} className="w-full" disabled={loading}>
-              {loading ? "Loading..." : "Refresh Data"}
+              {loading ? "Loading..." : "Fetch New Number"}
             </Button>
 
             <div className="bg-pink-50 dark:bg-pink-950 p-4 rounded-lg border border-pink-200 dark:border-pink-800">

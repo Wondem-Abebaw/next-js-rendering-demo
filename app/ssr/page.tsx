@@ -19,7 +19,6 @@ async function getServerData() {
 
 export default async function SSRPage() {
   const timeData = await getServerData()
-  const fetchedAt = new Date().toLocaleTimeString()
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-4">
@@ -60,10 +59,10 @@ export default async function SSRPage() {
               </div>
 
               <div className="border rounded-lg p-4 bg-slate-50 dark:bg-slate-800">
-                <p className="text-sm text-slate-500 dark:text-slate-400">Fetched at (Server Time)</p>
-                <p className="text-lg font-mono text-slate-900 dark:text-slate-50">{fetchedAt}</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Raw UTC String</p>
+                <p className="text-sm font-mono text-slate-900 dark:text-slate-50 break-all">{timeData.datetime}</p>
                 <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
-                  This updates on EVERY page refresh as the server re-renders
+                  This data comes directly from the API on every request
                 </p>
               </div>
             </div>

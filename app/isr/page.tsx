@@ -19,7 +19,6 @@ export const revalidate = 10 // Revalidate every 10 seconds
 
 export default async function ISRPage() {
   const timeData = await getISRData()
-  const generatedAt = new Date().toLocaleTimeString()
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-4">
@@ -55,11 +54,8 @@ export default async function ISRPage() {
               </div>
 
               <div className="border rounded-lg p-4 bg-slate-50 dark:bg-slate-800">
-                <p className="text-sm text-slate-500 dark:text-slate-400">Generated at (Server Time)</p>
-                <p className="text-lg font-mono text-slate-900 dark:text-slate-50">{generatedAt}</p>
-                <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
-                  This updates approximately every 10 seconds
-                </p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Raw UTC String</p>
+                <p className="text-sm font-mono text-slate-900 dark:text-slate-50 break-all">{timeData.datetime}</p>
               </div>
 
               <div className="border rounded-lg p-4 bg-slate-50 dark:bg-slate-800">
@@ -68,20 +64,12 @@ export default async function ISRPage() {
               </div>
 
               <div className="border rounded-lg p-4 bg-cyan-50 dark:bg-cyan-950">
-                <p className="text-sm font-semibold text-cyan-900 dark:text-cyan-100">Notice:</p>
+                <p className="text-sm font-semibold text-cyan-900 dark:text-cyan-100">How to Test ISR:</p>
                 <p className="text-sm text-cyan-800 dark:text-cyan-200 mt-1">
-                  Refresh the page rapidly. You'll see the same time for ~10 seconds, then it updates.
+                  Refresh the page rapidly within 10 seconds—you'll see the same API time. Wait 10+ seconds and refresh
+                  again—you'll see an updated time from the API.
                 </p>
               </div>
-            </div>
-
-            <div className="bg-orange-50 dark:bg-orange-950 p-4 rounded-lg border border-orange-200 dark:border-orange-800">
-              <h3 className="font-semibold text-orange-900 dark:text-orange-100 mb-2">Use ISR When:</h3>
-              <ul className="text-sm text-orange-800 dark:text-orange-200 space-y-1">
-                <li>• Need fast static pages with periodic updates</li>
-                <li>• Data changes occasionally (not real-time)</li>
-                <li>• Want SSG performance with fresher data than SSG</li>
-              </ul>
             </div>
 
             <Link href="/">

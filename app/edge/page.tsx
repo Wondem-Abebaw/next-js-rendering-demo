@@ -18,7 +18,6 @@ async function getEdgeData() {
 
 export default async function EdgePage() {
   const timeData = await getEdgeData()
-  const renderedAt = new Date().toLocaleTimeString()
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-4">
@@ -54,22 +53,20 @@ export default async function EdgePage() {
               </div>
 
               <div className="border rounded-lg p-4 bg-slate-50 dark:bg-slate-800">
-                <p className="text-sm text-slate-500 dark:text-slate-400">Rendered at (Edge Time)</p>
-                <p className="text-lg font-mono text-slate-900 dark:text-slate-50">{renderedAt}</p>
-                <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
-                  This renders on Vercel Edge Network (near you!)
-                </p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Timezone</p>
+                <p className="text-xl font-semibold text-slate-900 dark:text-slate-50">{timeData.timezone}</p>
               </div>
 
               <div className="border rounded-lg p-4 bg-slate-50 dark:bg-slate-800">
-                <p className="text-sm text-slate-500 dark:text-slate-400">Timezone</p>
-                <p className="text-xl font-semibold text-slate-900 dark:text-slate-50">{timeData.timezone}</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Raw UTC String</p>
+                <p className="text-sm font-mono text-slate-900 dark:text-slate-50 break-all">{timeData.datetime}</p>
+                <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Stable API data rendered consistently</p>
               </div>
 
               <div className="border rounded-lg p-4 bg-violet-50 dark:bg-violet-950">
                 <p className="text-sm font-semibold text-violet-900 dark:text-violet-100">Benefits:</p>
                 <ul className="text-sm text-violet-800 dark:text-violet-200 mt-2 space-y-1">
-                  <li>• Response times are typically &lt; 100ms globally</li>
+                  <li>• Response times typically &lt; 100ms globally</li>
                   <li>• No cold starts like serverless functions</li>
                   <li>• Ideal for real-time personalized content</li>
                 </ul>

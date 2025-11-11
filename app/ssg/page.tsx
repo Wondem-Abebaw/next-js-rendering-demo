@@ -45,12 +45,12 @@ export default async function SSGPage() {
 
             <div className="space-y-4">
               <div className="border rounded-lg p-4 bg-slate-50 dark:bg-slate-800">
-                <p className="text-sm text-slate-500 dark:text-slate-400">API Time (UTC) - Built at</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">API Time (UTC) - Frozen at Build Time</p>
                 <p className="text-2xl font-mono font-bold text-slate-900 dark:text-slate-50">
                   {new Date(timeData.datetime).toLocaleTimeString()}
                 </p>
                 <p className="text-xs text-slate-400 dark:text-slate-500 mt-2">
-                  This time is frozen from when the page was built
+                  This time was captured when the page was built and doesn't change
                 </p>
               </div>
 
@@ -59,21 +59,17 @@ export default async function SSGPage() {
                 <p className="text-xl font-semibold text-slate-900 dark:text-slate-50">{timeData.timezone}</p>
               </div>
 
+              <div className="border rounded-lg p-4 bg-slate-50 dark:bg-slate-800">
+                <p className="text-sm text-slate-500 dark:text-slate-400">Raw UTC String</p>
+                <p className="text-sm font-mono text-slate-900 dark:text-slate-50 break-all">{timeData.datetime}</p>
+              </div>
+
               <div className="border rounded-lg p-4 bg-amber-50 dark:bg-amber-950">
                 <p className="text-sm font-semibold text-amber-900 dark:text-amber-100">Notice:</p>
                 <p className="text-sm text-amber-800 dark:text-amber-200 mt-1">
-                  Refresh the page. The time should NOT change because this HTML was pre-built.
+                  Refresh the page multiple times. The time should NOT change because this HTML was pre-built.
                 </p>
               </div>
-            </div>
-
-            <div className="bg-purple-50 dark:bg-purple-950 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
-              <h3 className="font-semibold text-purple-900 dark:text-purple-100 mb-2">Use SSG When:</h3>
-              <ul className="text-sm text-purple-800 dark:text-purple-200 space-y-1">
-                <li>• Content rarely changes (blogs, docs, marketing sites)</li>
-                <li>• You need maximum performance</li>
-                <li>• Able to rebuild site when content updates</li>
-              </ul>
             </div>
 
             <Link href="/">
