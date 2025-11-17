@@ -1,87 +1,83 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
+import Link from "next/link";
 
-interface TimeData {
-  datetime: string
-  utc_offset: string
-  day_of_week: number
-  timezone: string
+interface BitcoinData {
+  bpi: {
+    USD: {
+      rate: string;
+    };
+  };
+  time: {
+    updated: string;
+  };
 }
 
-async function getServerData() {
-  const response = await fetch("https://worldtimeapi.org/api/timezone/Etc/UTC", {
-    cache: "no-store", // Force fresh data on each request
-  })
-  const data: TimeData = await response.json()
-  return data
+async function getBitcoinPrice() {
+  // const res = await fetch("https://api.coindesk.com/v1/bpi/currentprice.json", {
+  //   cache: "no-store", // Force SSR - no caching
+  // });
+  // const data: BitcoinData = await res.json();
+  // return data;
+  const res = await fetch("https://api.agify.io/?name=michael");
+  const data = await res.json();
+  return data;
 }
 
 export default async function SSRPage() {
-  const timeData = await getServerData()
+  const data = await getBitcoinPrice();
+  // const currentTime = new Date().toISOString();
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-4">
-      <div className="container mx-auto max-w-2xl py-12">
-        <Link href="/">
-          <Button variant="outline" className="mb-6 bg-transparent">
-            ← Back Home
-          </Button>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-slate-100 p-8">
+      <div className="max-w-3xl mx-auto">
+        <Link href="/" className="text-blue-600 hover:text-blue-800 mb-6 block">
+          ← Back Home
         </Link>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>SSR - Server-Side Rendering</CardTitle>
-            <CardDescription>Renders on the server for every request. Data is always fresh but slower.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
-              <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">How SSR Works:</h3>
-              <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
-                <li>• User requests page → Server fetches data from API</li>
-                <li>• Server renders complete HTML with data</li>
-                <li>• HTML sent to browser fully rendered</li>
-                <li>• This happens on EVERY request (no caching)</li>
-              </ul>
+        <div className="bg-white rounded-lg shadow-xl p-8">
+          <h2 className="text-2xl font-bold text-slate-900 mb-4">
+            SSR - Server-Side Rendering
+          </h2>
+
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <h3 className="font-semibold text-blue-900 mb-2">How SSR Works:</h3>
+            <ul className="text-sm text-blue-800 space-y-1">
+              <li>✓ Fetches data on EVERY request</li>
+              <li>✓ Server renders HTML with fresh data</li>
+              <li>✓ Always up-to-date</li>
+              <li>✓ Good for SEO</li>
+            </ul>
+          </div>
+
+          <div className="space-y-4">
+            <div className="bg-slate-50 border rounded-lg p-4">
+              <p className="text-sm text-slate-600 mb-1">Bitcoin Price (USD)</p>
+              {/* <p className="text-3xl font-bold text-slate-900">
+                $
+                {parseFloat(
+                  data.bpi.USD.rate.replace(",", "")
+                ).toLocaleString()}
+              </p> */}
+              <p className="text-xs text-slate-500 mt-1">
+                {/* Fetched at: {currentTime} */}
+              </p>
             </div>
 
-            <div className="space-y-4">
-              <div className="border rounded-lg p-4 bg-slate-50 dark:bg-slate-800">
-                <p className="text-sm text-slate-500 dark:text-slate-400">API Time (UTC)</p>
-                <p className="text-2xl font-mono font-bold text-slate-900 dark:text-slate-50">
-                  {new Date(timeData.datetime).toLocaleTimeString()}
-                </p>
-              </div>
-
-              <div className="border rounded-lg p-4 bg-slate-50 dark:bg-slate-800">
-                <p className="text-sm text-slate-500 dark:text-slate-400">Timezone</p>
-                <p className="text-xl font-semibold text-slate-900 dark:text-slate-50">{timeData.timezone}</p>
-              </div>
-
-              <div className="border rounded-lg p-4 bg-slate-50 dark:bg-slate-800">
-                <p className="text-sm text-slate-500 dark:text-slate-400">Raw UTC String</p>
-                <p className="text-sm font-mono text-slate-900 dark:text-slate-50 break-all">{timeData.datetime}</p>
-                <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
-                  This data comes directly from the API on every request
-                </p>
-              </div>
+            <div className="bg-slate-50 border rounded-lg p-4">
+              <p className="text-sm text-slate-600 mb-1">API Last Updated</p>
+              <p className="text-xl font-mono text-slate-900">
+                {/* {data.time.updated} */}
+              </p>
             </div>
 
-            <div className="bg-yellow-50 dark:bg-yellow-950 p-4 rounded-lg border border-yellow-200 dark:border-yellow-800">
-              <h3 className="font-semibold text-yellow-900 dark:text-yellow-100 mb-2">Use SSR When:</h3>
-              <ul className="text-sm text-yellow-800 dark:text-yellow-200 space-y-1">
-                <li>• You need fresh data on every request</li>
-                <li>• You require server-side security checks</li>
-                <li>• Data changes frequently and needs always up-to-date</li>
-              </ul>
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <p className="text-sm font-semibold text-yellow-900">Notice:</p>
+              <p className="text-sm text-yellow-800 mt-1">
+                Refresh this page to see NEW data fetched from the server!
+              </p>
             </div>
-
-            <Link href="/">
-              <Button className="w-full">Back Home</Button>
-            </Link>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
-    </main>
-  )
+    </div>
+  );
 }

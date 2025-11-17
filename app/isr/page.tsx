@@ -1,83 +1,77 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
+import Link from "next/link";
 
-interface TimeData {
-  datetime: string
-  utc_offset: string
-  day_of_week: number
-  timezone: string
+export const revalidate = 10; // Revalidate every 10 seconds
+
+interface NameData {
+  name: string;
+  age: number;
 }
 
-async function getISRData() {
-  const response = await fetch("https://worldtimeapi.org/api/timezone/Etc/UTC")
-  const data: TimeData = await response.json()
-  return data
+async function getNameData() {
+  const res = await fetch("https://api.agify.io/?name=michael");
+  const data: NameData = await res.json();
+  return data;
 }
-
-export const revalidate = 10 // Revalidate every 10 seconds
 
 export default async function ISRPage() {
-  const timeData = await getISRData()
+  const data = await getNameData();
+  // const fetchedAt = new Date().toISOString();
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-4">
-      <div className="container mx-auto max-w-2xl py-12">
-        <Link href="/">
-          <Button variant="outline" className="mb-6 bg-transparent">
-            ← Back Home
-          </Button>
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-slate-100 p-8">
+      <div className="max-w-3xl mx-auto">
+        <Link
+          href="/"
+          className="text-purple-600 hover:text-purple-800 mb-6 block"
+        >
+          ← Back Home
         </Link>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>ISR - Incremental Static Regeneration</CardTitle>
-            <CardDescription>Static pages that update periodically without full rebuild.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="bg-indigo-50 dark:bg-indigo-950 p-4 rounded-lg border border-indigo-200 dark:border-indigo-800">
-              <h3 className="font-semibold text-indigo-900 dark:text-indigo-100 mb-2">How ISR Works:</h3>
-              <ul className="text-sm text-indigo-800 dark:text-indigo-200 space-y-1">
-                <li>• Page is generated at build time (like SSG)</li>
-                <li>• Served from cache to all users (fast)</li>
-                <li>• In background, page regenerates periodically (every 10s here)</li>
-                <li>• New users get fresh content after regeneration</li>
-              </ul>
+        <div className="bg-white rounded-lg shadow-xl p-8">
+          <h2 className="text-2xl font-bold text-slate-900 mb-4">
+            ISR - Incremental Static Regeneration
+          </h2>
+
+          <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-6">
+            <h3 className="font-semibold text-purple-900 mb-2">
+              How ISR Works:
+            </h3>
+            <ul className="text-sm text-purple-800 space-y-1">
+              <li>✓ Serves cached version (fast)</li>
+              <li>✓ Revalidates every 10 seconds</li>
+              <li>✓ Background regeneration</li>
+              <li>✓ Best of SSG + SSR</li>
+            </ul>
+          </div>
+
+          <div className="space-y-4">
+            <div className="bg-slate-50 border rounded-lg p-4">
+              <p className="text-sm text-slate-600 mb-1">Name</p>
+              <p className="text-3xl font-bold text-slate-900">{data.name}</p>
             </div>
 
-            <div className="space-y-4">
-              <div className="border rounded-lg p-4 bg-slate-50 dark:bg-slate-800">
-                <p className="text-sm text-slate-500 dark:text-slate-400">API Time (UTC)</p>
-                <p className="text-2xl font-mono font-bold text-slate-900 dark:text-slate-50">
-                  {new Date(timeData.datetime).toLocaleTimeString()}
-                </p>
-              </div>
-
-              <div className="border rounded-lg p-4 bg-slate-50 dark:bg-slate-800">
-                <p className="text-sm text-slate-500 dark:text-slate-400">Raw UTC String</p>
-                <p className="text-sm font-mono text-slate-900 dark:text-slate-50 break-all">{timeData.datetime}</p>
-              </div>
-
-              <div className="border rounded-lg p-4 bg-slate-50 dark:bg-slate-800">
-                <p className="text-sm text-slate-500 dark:text-slate-400">Timezone</p>
-                <p className="text-xl font-semibold text-slate-900 dark:text-slate-50">{timeData.timezone}</p>
-              </div>
-
-              <div className="border rounded-lg p-4 bg-cyan-50 dark:bg-cyan-950">
-                <p className="text-sm font-semibold text-cyan-900 dark:text-cyan-100">How to Test ISR:</p>
-                <p className="text-sm text-cyan-800 dark:text-cyan-200 mt-1">
-                  Refresh the page rapidly within 10 seconds—you'll see the same API time. Wait 10+ seconds and refresh
-                  again—you'll see an updated time from the API.
-                </p>
-              </div>
+            <div className="bg-slate-50 border rounded-lg p-4">
+              <p className="text-sm text-slate-600 mb-1">Predicted Age</p>
+              <p className="text-3xl font-bold text-slate-900">
+                {data.age} years
+              </p>
             </div>
 
-            <Link href="/">
-              <Button className="w-full">Back Home</Button>
-            </Link>
-          </CardContent>
-        </Card>
+            <div className="bg-slate-50 border rounded-lg p-4">
+              <p className="text-sm text-slate-600 mb-1">Last Generated</p>
+              {/* <p className="text-lg font-mono text-slate-900">{fetchedAt}</p> */}
+            </div>
+
+            <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-4">
+              <p className="text-sm font-semibold text-cyan-900">Test ISR:</p>
+              <p className="text-sm text-cyan-800 mt-1">
+                Refresh quickly (within 10s) - same data. Wait 10+ seconds and
+                refresh - new data!
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
-    </main>
-  )
+    </div>
+  );
 }
