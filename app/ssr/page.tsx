@@ -1,79 +1,101 @@
 import Link from "next/link";
 
-interface BitcoinData {
-  bpi: {
-    USD: {
-      rate: string;
-    };
-  };
-  time: {
-    updated: string;
-  };
+interface JokeData {
+  setup: string;
+  punchline: string;
+  type: string;
+  id: number;
 }
 
-async function getBitcoinPrice() {
-  // const res = await fetch("https://api.coindesk.com/v1/bpi/currentprice.json", {
-  //   cache: "no-store", // Force SSR - no caching
-  // });
-  // const data: BitcoinData = await res.json();
-  // return data;
-  const res = await fetch("https://api.agify.io/?name=michael");
-  const data = await res.json();
+async function getJoke() {
+  const res = await fetch("https://official-joke-api.appspot.com/random_joke", {
+    cache: "no-store", // This makes it SSR - no caching!
+  });
+  if (!res.ok) throw new Error("Failed to fetch joke");
+  const data: JokeData = await res.json();
   return data;
 }
 
 export default async function SSRPage() {
-  const data = await getBitcoinPrice();
-  // const currentTime = new Date().toISOString();
+  const joke = await getJoke();
+  const serverTime = new Date().toISOString();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-slate-100 p-8">
+    <div className="min-h-screen p-8">
       <div className="max-w-3xl mx-auto">
-        <Link href="/" className="text-blue-600 hover:text-blue-800 mb-6 block">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-blue-300 hover:text-blue-100 mb-8 transition-colors"
+        >
           ← Back Home
         </Link>
 
-        <div className="bg-white rounded-lg shadow-xl p-8">
-          <h2 className="text-2xl font-bold text-slate-900 mb-4">
-            SSR - Server-Side Rendering
-          </h2>
+        <div className="bg-slate-800/80 backdrop-blur rounded-2xl shadow-2xl p-8 border border-slate-700">
+          <div className="flex items-center gap-4 mb-8">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-3xl">
+              🔄
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-white">SSR</h1>
+              <p className="text-blue-300">Server-Side Rendering</p>
+            </div>
+          </div>
 
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-            <h3 className="font-semibold text-blue-900 mb-2">How SSR Works:</h3>
-            <ul className="text-sm text-blue-800 space-y-1">
-              <li>✓ Fetches data on EVERY request</li>
-              <li>✓ Server renders HTML with fresh data</li>
-              <li>✓ Always up-to-date</li>
-              <li>✓ Good for SEO</li>
+          <div className="bg-blue-900/50 border border-blue-700 rounded-xl p-6 mb-8">
+            <h3 className="font-bold text-blue-200 mb-3 text-lg">
+              ⚡ How SSR Works:
+            </h3>
+            <ul className="text-blue-100 space-y-2 text-sm">
+              <li>✓ Server fetches joke on EVERY request</li>
+              <li>✓ Complete HTML rendered on server</li>
+              <li>✓ Always fresh data, never cached</li>
+              <li>✓ Good for SEO, always up-to-date</li>
             </ul>
           </div>
 
-          <div className="space-y-4">
-            <div className="bg-slate-50 border rounded-lg p-4">
-              <p className="text-sm text-slate-600 mb-1">Bitcoin Price (USD)</p>
-              {/* <p className="text-3xl font-bold text-slate-900">
-                $
-                {parseFloat(
-                  data.bpi.USD.rate.replace(",", "")
-                ).toLocaleString()}
-              </p> */}
-              <p className="text-xs text-slate-500 mt-1">
-                {/* Fetched at: {currentTime} */}
+          <div className="space-y-6">
+            <div className="bg-slate-900/50 border border-slate-600 rounded-xl p-6">
+              <p className="text-sm text-slate-400 mb-3">😄 Your Joke:</p>
+              <p className="text-xl text-white mb-4 leading-relaxed">
+                {joke.setup}
+              </p>
+              <p className="text-2xl text-blue-400 font-semibold leading-relaxed">
+                {joke.punchline}
+              </p>
+              <div className="mt-4 pt-4 border-t border-slate-700">
+                <p className="text-xs text-slate-500">
+                  Type: {joke.type} • ID: {joke.id}
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-slate-900/50 border border-slate-600 rounded-xl p-6">
+              <p className="text-sm text-slate-400 mb-2">
+                ⏰ Rendered on Server at:
+              </p>
+              <p className="text-lg font-mono text-white">{serverTime}</p>
+            </div>
+
+            <div className="bg-yellow-900/30 border border-yellow-700 rounded-xl p-6">
+              <p className="text-sm font-bold text-yellow-300 mb-2">
+                🧪 Test It:
+              </p>
+              <p className="text-sm text-yellow-100">
+                <strong>Refresh this page</strong> to get a NEW joke! Each
+                refresh = new server request = fresh data.
               </p>
             </div>
 
-            <div className="bg-slate-50 border rounded-lg p-4">
-              <p className="text-sm text-slate-600 mb-1">API Last Updated</p>
-              <p className="text-xl font-mono text-slate-900">
-                {/* {data.time.updated} */}
+            <div className="bg-green-900/30 border border-green-700 rounded-xl p-6">
+              <p className="text-sm font-bold text-green-300 mb-2">
+                ✅ Use SSR When:
               </p>
-            </div>
-
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-              <p className="text-sm font-semibold text-yellow-900">Notice:</p>
-              <p className="text-sm text-yellow-800 mt-1">
-                Refresh this page to see NEW data fetched from the server!
-              </p>
+              <ul className="text-sm text-green-100 space-y-1">
+                <li>• Data changes frequently</li>
+                <li>• Need personalized content</li>
+                <li>• Require authentication</li>
+                <li>• SEO with dynamic data</li>
+              </ul>
             </div>
           </div>
         </div>
