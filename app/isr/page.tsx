@@ -12,8 +12,7 @@ interface JokeData {
 async function getJoke() {
   const res = await fetch("https://official-joke-api.appspot.com/random_joke");
   if (!res.ok) throw new Error("Failed to fetch joke");
-  const data: JokeData = await res.json();
-  return data;
+  return res.json();
 }
 
 export default async function ISRPage() {
@@ -21,96 +20,138 @@ export default async function ISRPage() {
   const generatedAt = new Date().toISOString();
 
   return (
-    <div className="min-h-screen  p-8">
-      <div className="max-w-3xl mx-auto">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-purple-300 hover:text-purple-100 mb-8 transition-colors"
-        >
-          ← Back Home
-        </Link>
+    <div className="min-h-screen p-8 bg-white text-black flex flex-col">
+      <Link href="/" className="text-purple-700 text-xl hover:underline mb-4">
+        ← Back Home
+      </Link>
 
-        <div className="bg-slate-800/80 backdrop-blur rounded-2xl shadow-2xl p-8 border border-slate-700">
-          <div className="flex items-center gap-4 mb-8">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-3xl">
-              🔃
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-white">ISR</h1>
-              <p className="text-purple-300">Incremental Static Regeneration</p>
-            </div>
-          </div>
+      {/* Header */}
+      <div className="space-y-2 flex justify-center items-center flex-col mb-6">
+        <h1 className="text-5xl font-extrabold">ISR</h1>
+        <p className="text-2xl text-gray-700">
+          Incremental Static Regeneration
+        </p>
+      </div>
 
-          <div className="bg-purple-900/50 border border-purple-700 rounded-xl p-6 mb-8">
-            <h3 className="font-bold text-purple-200 mb-3 text-lg">
-              ⚡ How ISR Works:
+      {/* Main content: two columns */}
+      <div className="flex flex-wrap gap-6">
+        {/* Left Column: How it Works + Analogy */}
+        <div className="flex-1 min-w-[320px] space-y-6">
+          {/* How ISR Works */}
+          <div className="border rounded-2xl p-6 bg-gray-50">
+            <h3 className="text-3xl font-bold mb-4 text-purple-700">
+              ⚡ How ISR Works
             </h3>
-            <ul className="text-purple-100 space-y-2 text-sm">
-              <li>✓ Page cached for 10 seconds</li>
-              <li>✓ After 10s, regenerates in background</li>
-              <li>✓ Users get cached version (fast)</li>
-              <li>✓ Fresh joke after revalidation</li>
+            <ul className="list-decimal list-inside space-y-3 text-lg leading-relaxed">
+              <li>
+                First request → HTML generated on server and cached
+                <ul className="list-disc ml-6 mt-1 space-y-1">
+                  <li>Initial build is server-side rendered</li>
+                  <li>HTML stored for future visitors</li>
+                </ul>
+              </li>
+              <li>
+                Cached HTML served for next 10 seconds
+                <ul className="list-disc ml-6 mt-1 space-y-1">
+                  <li>Ultra-fast delivery</li>
+                  <li>No recomputation during this period</li>
+                </ul>
+              </li>
+              <li>
+                After cache expires → first visitor triggers background
+                regeneration
+                <ul className="list-disc ml-6 mt-1 space-y-1">
+                  <li>New HTML built in background</li>
+                  <li>Replaces old cached HTML</li>
+                </ul>
+              </li>
+              <li>
+                Fresh HTML served until next expiration
+                <ul className="list-disc ml-6 mt-1 space-y-1">
+                  <li>Static speed + automatic freshness</li>
+                </ul>
+              </li>
             </ul>
           </div>
 
-          <div className="space-y-6">
-            <div className="bg-slate-900/50 border border-slate-600 rounded-xl p-6">
-              <p className="text-sm text-slate-400 mb-3">
-                😄 Your Cached Joke:
-              </p>
-              <p className="text-xl text-white mb-4 leading-relaxed">
-                {joke.setup}
-              </p>
-              <p className="text-2xl text-purple-400 font-semibold leading-relaxed">
-                {joke.punchline}
-              </p>
-              <div className="mt-4 pt-4 border-t border-slate-700">
-                <p className="text-xs text-slate-500">
-                  Type: {joke.type} • ID: {joke.id}
-                </p>
-              </div>
-            </div>
-
-            <div className="bg-slate-900/50 border border-slate-600 rounded-xl p-6">
-              <p className="text-sm text-slate-400 mb-2">🕐 Generated At:</p>
-              <p className="text-lg font-mono text-white">{generatedAt}</p>
-              <p className="text-xs text-slate-500 mt-2">
-                This joke is served from cache for 10 seconds
-              </p>
-            </div>
-
-            <div className="bg-cyan-900/30 border border-cyan-700 rounded-xl p-6">
-              <p className="text-sm font-bold text-cyan-300 mb-2">
-                🧪 Test ISR:
-              </p>
-              <div className="text-sm text-cyan-100 space-y-2">
-                <p>
-                  <strong>Step 1:</strong> Refresh rapidly (within 10 seconds) -
-                  same joke!
-                </p>
-                <p>
-                  <strong>Step 2:</strong> Wait 10+ seconds and refresh - NEW
-                  joke!
-                </p>
-                <p className="text-xs text-cyan-300 mt-2">
-                  ISR = Static speed + automatic freshness 🚀
-                </p>
-              </div>
-            </div>
-
-            <div className="bg-green-900/30 border border-green-700 rounded-xl p-6">
-              <p className="text-sm font-bold text-green-300 mb-2">
-                ✅ Use ISR When:
-              </p>
-              <ul className="text-sm text-green-100 space-y-1">
-                <li>• Content updates periodically</li>
-                <li>• Need both speed AND freshness</li>
-                <li>• E-commerce, news, dashboards</li>
-                <li>• Can tolerate slight staleness</li>
-              </ul>
-            </div>
+          {/* Restaurant Analogy */}
+          <div className="border rounded-2xl p-6 bg-yellow-50">
+            <h3 className="text-3xl font-bold mb-2 text-yellow-700">
+              🍽 Restaurant Analogy
+            </h3>
+            <ul className="text-lg space-y-2 list-inside">
+              <li>
+                🧑‍🍳 Chef prepares dish for first customer (server renders HTML)
+                <ul className="ml-6 list-disc">
+                  <li>Stored on shelf (cache)</li>
+                </ul>
+              </li>
+              <li>🥡 Next customers within 10s get same dish instantly</li>
+              <li>
+                ⏳ After 10s, first visitor triggers chef to prepare fresh dish
+                <ul className="ml-6 list-disc">
+                  <li>Fresh dish replaces old dish in shelf</li>
+                </ul>
+              </li>
+              <li>
+                🏃‍♂️ Subsequent customers get new dish until next expiration
+              </li>
+            </ul>
           </div>
         </div>
+
+        {/* Right Column: Joke + Generated Time + Test */}
+        <div className="flex-1 min-w-[320px] space-y-6">
+          {/* Joke */}
+          <div className="border rounded-2xl p-6 bg-gray-50">
+            <p className="text-lg text-gray-600 mb-2">😄 Your Cached Joke:</p>
+            <p className="text-2xl font-semibold mb-2">{joke.setup}</p>
+            <p className="text-3xl font-bold text-purple-700">
+              {joke.punchline}
+            </p>
+          </div>
+
+          {/* Generated At */}
+          <div className="border rounded-2xl p-6 bg-gray-50">
+            <p className="text-xl text-gray-600 mb-1">🕐 Generated At:</p>
+            <p className="text-2xl font-mono">{generatedAt}</p>
+            <p className="text-sm text-gray-500 mt-2">
+              This joke is served from cache for 10 seconds
+            </p>
+          </div>
+
+          {/* Test Instructions */}
+          <div className="border rounded-2xl p-6 bg-cyan-50">
+            <h3 className="text-3xl font-bold text-cyan-700 mb-2">
+              🧪 Test ISR
+            </h3>
+            <ul className="list-disc list-inside text-lg space-y-1">
+              <li>
+                <strong>Step 1:</strong> Refresh rapidly (within 10s) → same
+                joke
+              </li>
+              <li>
+                <strong>Step 2:</strong> Wait 10+ seconds and refresh → NEW joke
+              </li>
+              <li className="text-sm text-cyan-600 mt-1">
+                ISR = Static speed + automatic freshness 🚀
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      {/* Full-width "Use When" */}
+      <div className="mt-10 border rounded-2xl p-8 bg-green-50 max-w-3xl mx-auto text-center">
+        <h3 className="text-3xl font-bold mb-4 text-green-700">
+          ✅ Use ISR When
+        </h3>
+        <ul className="list-disc list-inside text-xl space-y-2 leading-relaxed">
+          <li>Content updates periodically</li>
+          <li>Need both speed AND freshness</li>
+          <li>E-commerce, news, dashboards</li>
+          <li>Can tolerate slight staleness</li>
+        </ul>
       </div>
     </div>
   );

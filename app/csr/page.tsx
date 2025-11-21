@@ -34,106 +34,119 @@ export default function CSRPage() {
   };
 
   return (
-    <div className="min-h-screen p-8">
-      <div className="max-w-3xl mx-auto">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-orange-300 hover:text-orange-100 mb-8 transition-colors"
-        >
-          ← Back Home
-        </Link>
+    <div className="min-h-screen p-8 bg-white text-black flex flex-col">
+      <Link href="/" className="text-blue-700 text-xl hover:underline mb-4">
+        ← Back Home
+      </Link>
+      <div className="space-y-2 flex justify-center items-center flex-col">
+        <h1 className="text-5xl font-extrabold">CSR</h1>
+        <p className="text-2xl text-gray-700">Client-Side Rendering</p>
+      </div>
+      {/* Main content: two columns */}
+      <div className="flex flex-wrap gap-6">
+        {/* Left Column: How it Works + Analogy */}
+        <div className="flex-1 min-w-[320px] space-y-6">
+          {/* Header */}
 
-        <div className="bg-slate-800/80 backdrop-blur rounded-2xl shadow-2xl p-8 border border-slate-700">
-          <div className="flex items-center gap-4 mb-8">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-3xl">
-              💻
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-white">CSR</h1>
-              <p className="text-orange-300">Client-Side Rendering</p>
-            </div>
-          </div>
-
-          <div className="bg-orange-900/50 border border-orange-700 rounded-xl p-6 mb-8">
-            <h3 className="font-bold text-orange-200 mb-3 text-lg">
-              ⚡ How CSR Works:
+          {/* How CSR Works */}
+          <div className="border rounded-2xl p-6 bg-gray-50">
+            <h3 className="text-3xl font-bold mb-4 text-purple-700">
+              ⚡ How CSR Works
             </h3>
-            <ul className="text-orange-100 space-y-2 text-sm">
-              <li>✓ Page loads with empty state</li>
-              <li>✓ JavaScript fetches joke in browser</li>
-              <li>✓ React renders after data loads</li>
-              <li>✓ Real-time, interactive updates</li>
+            <ul className="list-disc list-inside space-y-2 text-lg leading-relaxed">
+              <li>Browser requests the page.</li>
+              <li>Server returns mostly empty HTML shell.</li>
+              <li>Browser downloads JavaScript bundle.</li>
+              <li>React initializes in browser.</li>
+              <li>
+                <code className="font-semibold">useEffect</code> runs → fetches
+                data.
+              </li>
+              <li>Browser renders final UI with data.</li>
             </ul>
           </div>
 
+          {/* Restaurant Analogy */}
+          <div className="border rounded-2xl p-6 bg-yellow-50">
+            <h3 className="text-3xl font-bold mb-2 text-yellow-700">
+              🍽 Restaurant Analogy
+            </h3>
+            <p className="text-lg leading-relaxed">
+              CSR is like a restaurant where the waiter gives you an{" "}
+              <strong>empty plate</strong>. Then{" "}
+              <strong>you (the browser)</strong> go to collect the food (data).
+              Server does almost nothing — the customer handles the experience.
+            </p>
+          </div>
+        </div>
+
+        {/* Right Column: Joke + Counter + Button + Notice */}
+        <div className="flex-1 min-w-[320px] space-y-6">
           {loading ? (
             <div className="text-center py-16">
-              <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-orange-400 mx-auto mb-4"></div>
-              <p className="text-orange-300 text-lg">
-                Fetching joke from browser...
-              </p>
+              <div className="animate-spin h-14 w-14 border-4 border-gray-300 border-t-black rounded-full mx-auto mb-6"></div>
+              <p className="text-2xl text-gray-600">Fetching joke…</p>
             </div>
           ) : joke ? (
-            <div className="space-y-6">
-              <div className="bg-slate-900/50 border border-slate-600 rounded-xl p-6">
-                <p className="text-sm text-slate-400 mb-3">
-                  😄 Your Interactive Joke:
-                </p>
-                <p className="text-xl text-white mb-4 leading-relaxed">
-                  {joke.setup}
-                </p>
-                <p className="text-2xl text-orange-400 font-semibold leading-relaxed">
+            <>
+              {/* Joke Box */}
+              <div className="border rounded-2xl p-6 bg-gray-50">
+                <p className="text-lg text-gray-500 mb-2">Interactive Joke</p>
+                <p className="text-2xl font-semibold mb-2">{joke.setup}</p>
+                <p className="text-3xl font-bold text-blue-700">
                   {joke.punchline}
                 </p>
-                <div className="mt-4 pt-4 border-t border-slate-700">
-                  <p className="text-xs text-slate-500">
-                    Type: {joke.type} • ID: {joke.id}
-                  </p>
-                </div>
+                <p className="text-sm text-gray-500 mt-2">
+                  Type: {joke.type} • ID: {joke.id}
+                </p>
               </div>
 
-              <div className="bg-slate-900/50 border border-slate-600 rounded-xl p-6">
-                <p className="text-sm text-slate-400 mb-2">🎯 Jokes Fetched:</p>
-                <p className="text-4xl font-bold text-white">{count + 1}</p>
+              {/* Counter */}
+              <div className="border rounded-2xl p-6 bg-gray-50 text-center">
+                <p className="text-xl text-gray-600 mb-1">Jokes Fetched</p>
+                <p className="text-5xl font-bold">{count + 1}</p>
               </div>
 
+              {/* Button */}
               <button
                 onClick={() => setCount((c) => c + 1)}
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white py-4 rounded-xl font-bold text-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-orange-500/50"
+                className="w-full bg-black text-white py-4 rounded-2xl text-2xl font-bold hover:bg-gray-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? "Loading..." : "🎲 Get New Joke!"}
+                {loading ? "Loading..." : "🎲 Fetch New Joke"}
               </button>
 
-              <div className="bg-lime-900/30 border border-lime-700 rounded-xl p-6">
-                <p className="text-sm font-bold text-lime-300 mb-2">
-                  ✨ Notice:
-                </p>
-                <p className="text-sm text-lime-100">
-                  Every click fetches a <strong>brand new joke</strong> from the
-                  API! This is pure client-side rendering with real-time
-                  updates.
+              {/* Notice */}
+              <div className="border rounded-2xl p-6 bg-green-50">
+                <h3 className="text-3xl font-bold mb-2 text-green-700">
+                  ✨ Notice
+                </h3>
+                <p className="text-lg">
+                  Each button click fetches a new joke{" "}
+                  <strong>from the browser</strong>, demonstrating pure
+                  client-side rendering.
                 </p>
               </div>
-
-              <div className="bg-green-900/30 border border-green-700 rounded-xl p-6">
-                <p className="text-sm font-bold text-green-300 mb-2">
-                  ✅ Use CSR When:
-                </p>
-                <ul className="text-sm text-green-100 space-y-1">
-                  <li>• Need real-time interactions</li>
-                  <li>• Building dashboards/apps</li>
-                  <li>• User-specific content</li>
-                  <li>• SEO is not critical</li>
-                </ul>
-              </div>
-            </div>
+            </>
           ) : (
-            <div className="text-center py-16">
-              <p className="text-red-400 text-lg">Failed to load joke 😢</p>
-            </div>
+            <p className="text-center text-2xl text-red-600">
+              Failed to load joke 😢
+            </p>
           )}
         </div>
+      </div>
+
+      {/* Full-width "Use When" at center below columns */}
+      <div className="mt-10 border rounded-2xl p-8 bg-blue-50 max-w-3xl mx-auto text-center">
+        <h3 className="text-3xl font-bold mb-4 text-blue-700">
+          ✅ Use CSR When:
+        </h3>
+        <ul className="list-disc list-inside text-xl space-y-2 leading-relaxed">
+          <li>Building dashboards or apps</li>
+          <li>UI updates in real-time</li>
+          <li>User-specific or private data</li>
+          <li>SEO isn’t important</li>
+        </ul>
       </div>
     </div>
   );
